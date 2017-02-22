@@ -1,0 +1,5 @@
+FROM nathonfowlie/centos-jre
+#RUN yum -y install net-tools
+ADD target/TallyGSPServices-1.0-SNAPSHOT-uber.jar /TallyGSPServices-1.0-SNAPSHOT-uber.jar
+ENTRYPOINT ["java", "-cp", "TallyGSPServices-1.0-SNAPSHOT-uber.jar", "loadbalancing.BackendApp"]
+

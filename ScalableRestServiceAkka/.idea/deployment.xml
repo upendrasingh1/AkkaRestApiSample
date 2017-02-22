@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" autoUpload="Always" serverName="gsp_aws_docker_client" deleteMissingItems="true" createEmptyFolders="true">
+    <serverData>
+      <paths name="gsp_aws_docker_client">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/work/tally-gsp-demo" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="gsp_aws_docker_client_1">
+        <serverdata>
+          <mappings>
+            <mapping deploy="work/tally-gsp-demo" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
+  </component>
+</project>

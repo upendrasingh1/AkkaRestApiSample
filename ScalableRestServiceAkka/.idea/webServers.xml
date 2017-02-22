@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="bc3fbb17-32ae-429b-b6fb-effa77e411aa" name="gsp_aws_docker_client" url="http://ec2-35-154-56-240.ap-south-1.compute.amazonaws.com">
+        <fileTransfer host="ec2-35-154-56-240.ap-south-1.compute.amazonaws.com" port="22" rootFolder="/root" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="10000" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="fdbe1f59-bead-4843-bfda-fedc66d1d6e3" name="gsp_aws_docker_client_1" url="http://35.154.32.216">
+        <fileTransfer host="35.154.32.216" port="22" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

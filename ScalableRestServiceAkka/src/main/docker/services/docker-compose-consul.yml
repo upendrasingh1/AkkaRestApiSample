@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+  consul-server:
+    container_name: consul
+    image: consul
+    network_mode: host
+    environment:
+      - 'CONSUL_LOCAL_CONFIG={"skip_leave_on_interrupt": true}'
+    command: agent -server -bind=$DOCKER_IP -bootstrap-expect=1 -client=$DOCKER_IP

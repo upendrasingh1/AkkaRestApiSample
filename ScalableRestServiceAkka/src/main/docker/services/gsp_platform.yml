@@ -1,0 +1,49 @@
+version: '2'
+services:
+
+  seed:
+    build:
+      context: /root/work/tally-gsp-demo
+      dockerfile: src/main/docker/services/backendservice
+    hostname: "akkaseed"
+    image: backend
+    container_name: akkaseed
+    network_mode: "host"
+    command: "-Dakka.remote.netty.tcp.hostname=akkaseed"
+
+  backendservice:
+    build:
+      context: /root/work/tally-gsp-demo
+      dockerfile: src/main/docker/services/backendservice
+    image: backend
+    container_name: backend
+    network_mode: "host"
+
+
+  frontendservice:
+    build:
+      context: /root/work/tally-gsp-demo
+      dockerfile: src/main/docker/services/frontendservice
+    container_name: frontend
+    image: frontend
+    ports:
+      - 8082
+    depends_on:
+      - backendservice
+    network_mode: "host"
+
+  lb:
+    image: hanzel/load-balancing-swarm
+    container_name: lb
+    environment:
+      - constraint:node==master
+      - APP_NAME=frontend
+      - CONSUL_URL=${KV_IP}:8500
+    depends_on:
+      - frontendservice
+    network_mode: "host"
+
+
+
+
+

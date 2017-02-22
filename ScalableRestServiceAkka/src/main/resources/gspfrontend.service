@@ -1,0 +1,15 @@
+[Unit]
+Description=GSP API Frontend
+After=syslog.target
+
+[Service]
+Type=simple
+PIDFile=/var/run/gspfrontend.pid
+# Note the -f: don't fail if there is no PID file
+ExecStartPre=/bin/rm -f /var/run/gspfrontend.pid
+ExecStart=/usr/bin/java -cp /opt/tally/gsp/TallyGSPServices-1.0-SNAPSHOT-uber.jar loadbalancing.FrontendApp \
+ --daemon --pidfile /var/run/gspfrontend.pid
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,58 @@
+Step1: Compile the maven project. This should result in creation of rpm and fat jar
+#mvn package
+#sudo rpm -ivh target/rpm/TallyGSPServices/RPMS/noarch/TallyGSPServices-1.0-SNAPSHOT*.rpm
+#sudo systemctml daemon-reload
+#sudo systemctl start gspfrontend
+#sudo systemctl start gspbackend@{1..3}
+
+To Test above run below command on apache bench
+#ab -p input.txt -T application/json -c 10 -n 2000 http://localhost:8082/addition
+
+To stop the services:
+#sudo systemctl stop gspfrontend
+#sudo systemctl stop gspbackend@{1..3}
+
+To uninstall the rpm:
+#sudo rpm -ev TallyGSPServices-1.0-SNAPSHOT*
+
+Pure Docker Mode:
+Start the docker service:
+#systemctl start docker
+
+Building the docker images:
+#docker build -t gspfrontend -f src/main/docker/frontendservice .
+#docker build -t gspbackend -f src/main/docker/backendservice .
+
+Above command should build docker images with tag gsp:frontend and gsp:backend.
+This can be verified with command #docker images
+[root@localhost tally-gsp-demo]# docker images
+REPOSITORY               TAG                 IMAGE ID            CREATED             SIZE
+gsp                      backend             2f2d46c39f00        9 seconds ago       356.9 MB
+gsp                      frontend            3e996a74db78        55 seconds ago      356.9 MB
+
+To run the container from the images build above
+#docker run --net="host" -d -i 2f2d46c39f00
+#docker run --net="host" -d -i 3e996a74db78
+
+Tp check if they are up or  not:
+[root@localhost tally-gsp-demo]# docker ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
+0241746742ce        3e996a74db78        "java -cp TallyGSPSer"   3 minutes ago       Up 3 minutes                            desperate_kalam
+1c8b7c007792        2f2d46c39f00        "java -cp TallyGSPSer"   4 minutes ago       Up 4 minutes                            naughty_jones
+
+To Test above run below command on apache bench
+#ab -p input.txt -T application/json -c 10 -n 2000 http://ec2-35-154-70-224.ap-south-1.compute.amazonaws.com/addition
+
+To stop the containers
+#docker stop 0241746742ce 1c8b7c007792
+
+To remove the containers
+#docker rm 0241746742ce 1c8b7c007792
+
+Verifying above
+[root@localhost tally-gsp-demo]# docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               N
+
+
+sudo docker-compose -f gsp_platform.yml scale backendservice=3
+

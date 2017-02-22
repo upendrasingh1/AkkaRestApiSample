@@ -1,0 +1,16 @@
+{{$app := env "APP_NAME"}}
+{{$port := "-8082"}}
+
+upstream {{printf (print $app$port)}} {
+    least_conn;
+    {{range service (print $app$port)}}
+    server {{.Address}}:{{.Port}} max_fails=3 fail_timeout=60 weight=1;{{end}}
+}
+
+server {
+    listen 80 default;
+
+    location / {
+        proxy_pass http://{{printf $app$port}};
+    }
+}

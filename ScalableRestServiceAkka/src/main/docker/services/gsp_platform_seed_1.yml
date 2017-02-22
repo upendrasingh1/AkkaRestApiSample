@@ -1,0 +1,47 @@
+version: '2'
+
+services:
+  #seed:
+  #  image: docker-compose-akka-cluster:0.1-SNAPSHOT
+  # hostname: akkaseed
+  #  command: -Dakka.remote.netty.tcp.hostname=akkaseed
+
+  #node:
+  #  image: docker-compose-akka-cluster:0.1-SNAPSHOT
+  #  links:
+  #    - "seed:akkaseed"
+
+  seed:
+    build:
+      context: /root/work/tally-gsp-demo
+      dockerfile: src/main/docker/services/backendservice
+    image: akkaseed
+    hostname: akkaseed
+    command: -Dakka.remote.netty.tcp.hostname=akkaseed
+
+  backend:
+    build:
+      context: /root/work/tally-gsp-demo
+      dockerfile: src/main/docker/services/backendservice
+    image: backend
+    links:
+      - "seed:akkaseed"
+    dns: 172.31.15.183
+    dns_search: service.consul
+
+  frontend:
+    build:
+      context: /root/work/tally-gsp-demo
+      dockerfile: src/main/docker/services/frontendservice
+    image: frontend
+    ports:
+      - "8082:8082"
+    links:
+      - "seed:akkaseed"
+    dns: 172.31.15.183
+    dns_search: service.consul
+
+networks:
+  default:
+    external:
+      name: my-net

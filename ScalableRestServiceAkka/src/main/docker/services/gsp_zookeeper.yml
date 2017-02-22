@@ -1,0 +1,35 @@
+version: '2'
+services:
+
+  zookeeper:
+    build:
+      context: /root/work/tally-gsp-demo
+      dockerfile: src/main/docker/services/zookeeper
+    ports:
+      - "2181:2181"
+      - "2888:2888"
+      - "3888:3888"
+    hostname: zookeeper
+    environment:
+      - constraint:node==master
+    volumes:
+      - /mnt/data/zookeeper:/tmp/zookeeper
+    networks:
+      - back-tier
+
+  backendservice:
+    build:
+      context: /root/work/tally-gsp-demo
+      dockerfile: src/main/docker/services/backendservice
+    ports:
+      - "1601"
+    environment:
+      - CLUSTER_PORT=1601
+      - CLUSTER_IP=backendservice
+      - SEED_PORT_1600_TCP_ADDR=seed1
+    networks:
+      - back-tier
+
+networks:
+  back-tier:
+    driver: overlay

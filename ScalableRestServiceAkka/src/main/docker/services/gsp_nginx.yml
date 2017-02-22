@@ -1,0 +1,4 @@
+nginx:
+  build: /home/centos/work/tally-gsp-demo
+  dockerfile: src/main/docker/services/nginx
+  net: "host"

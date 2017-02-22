@@ -1,0 +1,52 @@
+version: '2'
+services:
+  seed1:
+    build:
+      context: /root/work/tally-gsp-demo
+      dockerfile: src/main/docker/services/backendservice
+    ports:
+      - "1600:1600"
+    environment:
+      - CLUSTER_PORT=1600
+      - CLUSTER_IP=seed1
+      - SEED_PORT_1600_TCP_ADDR=seed1
+
+  backendservice:
+    build:
+      context: /root/work/tally-gsp-demo
+      dockerfile: src/main/docker/services/backendservice
+    hostname: backendservice1
+    ports:
+      - "1601"
+    environment:
+      - CLUSTER_PORT=1601
+      - CLUSTER_IP=backendservice
+      - SEED_PORT_1600_TCP_ADDR=seed1
+
+
+  frontend:
+    build:
+      context: /root/work/tally-gsp-demo
+      dockerfile: src/main/docker/services/frontendservice
+    image: frontend
+    ports:
+      - "8082"
+      - "1602"
+    environment:
+      - CLUSTER_PORT=1602
+      - CLUSTER_IP=frontend
+      - SEED_PORT_1600_TCP_ADDR=seed1
+
+
+  lb:
+    image: hanzel/load-balancing-swarm
+    container_name: lb
+    ports:
+      - "80:80"
+    environment:
+      - constraint:node==master
+      - APP_NAME=frontend-8082
+      - CONSUL_URL=${KV_IP}:8500
+    depends_on:
+      - frontend
+

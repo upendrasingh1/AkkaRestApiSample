@@ -1,0 +1,73 @@
+version: '2'
+services:
+  seed:
+    build:
+      context: /root/work/tally-gsp-demo
+      dockerfile: src/main/docker/services/backendservice
+    hostname: "seed"
+    image: backend
+    container_name: seed
+    ports:
+      - "2552"
+    networks:
+      - front-tier
+      - back-tier
+    command: "-Dakka.remote.netty.tcp.hostname=akkaseed"
+    environment:
+      - CLUSTER_PORT=9090
+      - CLUSTER_IP=seed
+      - SEED_PORT_1600_TCP_ADDR=seed
+
+  backendservice:
+    build:
+      context: /root/work/tally-gsp-demo
+      dockerfile: src/main/docker/services/backendservice
+    image: backend
+    container_name: backend
+    networks:
+      - front-tier
+      - back-tier
+    links: ["seed:seed"]
+    environment:
+      - CLUSTER_IP=""
+      - CLUSTER_PORT=0
+      - SEED_PORT_1600_TCP_ADDR=seed
+
+  frontendservice:
+    build:
+      context: /root/work/tally-gsp-demo
+      dockerfile: src/main/docker/services/frontendservice
+    container_name: frontend
+    image: frontend
+    ports:
+      - "8082"
+    links: ["seed:seed"]
+    depends_on:
+      - backendservice
+    networks:
+      - front-tier
+      - back-tier
+    environment:
+      - CLUSTER_IP=""
+      - CLUSTER_PORT=0
+      - SEED_PORT_1600_TCP_ADDR=seed
+
+  lb:
+    image: hanzel/load-balancing-swarm
+    container_name: lb
+    ports:
+      - "80:80"
+    environment:
+      - constraint:node==master
+      - APP_NAME=frontend
+      - CONSUL_URL=${KV_IP}:8500
+    depends_on:
+      - frontendservice
+    networks:
+      - front-tier
+
+networks:
+  front-tier:
+    driver: overlay
+  back-tier:
+    driver: overlay
